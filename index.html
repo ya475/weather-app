@@ -147,18 +147,6 @@
             margin-bottom: 6px;
             text-align: center;
         }
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #B0BEC5;
-            font-size: 14px;
-        }
-        .error {
-            text-align: center;
-            padding: 20px;
-            color: #EF5350;
-            font-size: 14px;
-        }
         .offline-badge {
             text-align: center;
             font-size: 9px;
@@ -177,7 +165,7 @@
     <div class="container">
         <div class="header">
             <h1>🌤️ پیش‌بینی آب و هوا</h1>
-            <div class="provider">📡 ارائه دهنده: تشکیلات کل گروه‌نهم</div>
+            <div class="provider">📡 ارائه دهنده خدمات آب و هواشناسی: تشکیلات کل گروه‌نهم توسط محمدمهدی قیاسی</div>
         </div>
 
         <div class="weather-card">
@@ -197,19 +185,15 @@
         </div>
 
         <div class="footer">
-            © 2025 — تشکیلات کل گروه‌نهم | ارائه دهنده خدمات آب و هواشناسی
+            © 2025 — ارائه دهنده خدمات آب و هواشناسی از بخش خدمات‌رسانی گروه‌نهم توسط محمدمهدی قیاسی
         </div>
     </div>
 
     <script>
-        // ==================== آدرس فایل JSON روی GitHub Pages ====================
-        const JSON_URL =
-            'https://raw.githubusercontent.com/ya475/weather-app/main/weather-data.json';
-
+        const JSON_URL = 'https://raw.githubusercontent.com/ya475/weather-app/main/weather-data.json';
         let cachedData = null;
         let isOnline = true;
 
-        // ==================== لود داده ====================
         async function fetchWeatherData() {
             try {
                 const response = await fetch(JSON_URL + '?t=' + Date.now());
@@ -220,9 +204,7 @@
                 return data;
             } catch (e) {
                 isOnline = false;
-                if (cachedData) {
-                    return cachedData;
-                }
+                if (cachedData) return cachedData;
                 throw e;
             }
         }
@@ -232,12 +214,10 @@
             document.getElementById('display-icon').textContent = data.icon || '❓';
             document.getElementById('display-desc').textContent = data.desc || '';
             document.getElementById('display-temp').textContent = (data.temp || '--') + '°';
-            document.getElementById('display-feel').textContent = 'مانند ' + (data.feelsLike || data.temp ||
-                '--') + '°';
+            document.getElementById('display-feel').textContent = 'مانند ' + (data.feelsLike || data.temp || '--') + '°';
             document.getElementById('display-time').textContent =
                 'آخرین بروزرسانی: ' + (data.date || '') + ' — ' + (data.time || '');
-            document.getElementById('display-forecast').textContent = data.forecast ||
-                'پیش‌بینی در دسترس نیست.';
+            document.getElementById('display-forecast').textContent = data.forecast || 'پیش‌بینی در دسترس نیست.';
 
             const container = document.getElementById('weather-details');
             if (data.details && data.details.length > 0) {
@@ -251,12 +231,9 @@
                 container.innerHTML = '';
             }
 
-            const badge = document.getElementById('offline-badge');
-            if (isOnline) {
-                badge.textContent = '🌐 آنلاین — اطلاعات از سرور دریافت شد';
-            } else {
-                badge.textContent = '📴 آفلاین — نمایش آخرین اطلاعات ذخیره‌شده';
-            }
+            document.getElementById('offline-badge').textContent = isOnline ?
+                '🌐 آنلاین — اطلاعات از سرور دریافت شد' :
+                '📴 آفلاین — نمایش آخرین اطلاعات ذخیره‌شده';
         }
 
         function showError(msg) {
@@ -284,4 +261,4 @@
         init();
     </script>
 </body>
-  </html>
+</html>
