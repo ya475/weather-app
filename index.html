@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>پیش‌بینی آب و هوا | تشکیلات کل گروه‌نهم</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Tahoma', 'Segoe UI', sans-serif;
+            background: linear-gradient(180deg, #1a237e 0%, #283593 30%, #3949ab 60%, #5c6bc0 100%);
+            min-height: 100vh;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            color: white;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        .header {
+            text-align: center;
+            padding: 14px 16px 10px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 16px;
+            margin-top: 30px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .header h1 {
+            font-size: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .header .provider {
+            font-size: 12px;
+            color: #FFD54F;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+        .weather-card {
+            background: rgba(255,255,255,0.12);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255,255,255,0.18);
+            position: relative;
+            overflow: hidden;
+        }
+        .weather-card::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 180px;
+            height: 180px;
+            background: rgba(255,215,0,0.06);
+            border-radius: 50%;
+        }
+        .temp-main {
+            font-size: 68px;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.35);
+        }
+        .temp-feel {
+            text-align: center;
+            font-size: 14px;
+            color: #B0BEC5;
+        }
+        .weather-icon {
+            text-align: center;
+            font-size: 64px;
+        }
+        .weather-desc {
+            text-align: center;
+            font-size: 18px;
+            color: #FFD54F;
+            margin-bottom: 10px;
+        }
+        .weather-detail {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .detail-item {
+            text-align: center;
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 10px;
+            min-width: 70px;
+            flex: 1;
+        }
+        .detail-item .value {
+            font-size: 17px;
+            font-weight: bold;
+        }
+        .detail-item .label {
+            font-size: 10px;
+            color: #B0BEC5;
+            margin-top: 2px;
+        }
+        .location {
+            text-align: center;
+            font-size: 15px;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+        .update-time {
+            text-align: center;
+            font-size: 10px;
+            color: #90A4AE;
+            margin-top: 8px;
+        }
+        .result-provider {
+            text-align: center;
+            font-size: 13px;
+            color: #FFD54F;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+        .forecast-box {
+            background: rgba(255,215,0,0.08);
+            border: 1px solid rgba(255,215,0,0.25);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-top: 14px;
+            font-size: 13px;
+            line-height: 1.9;
+            color: #E0E0E0;
+            text-align: justify;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            min-height: 50px;
+        }
+        .forecast-box .forecast-label {
+            font-size: 11px;
+            color: #FFD54F;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #B0BEC5;
+            font-size: 14px;
+        }
+        .error {
+            text-align: center;
+            padding: 20px;
+            color: #EF5350;
+            font-size: 14px;
+        }
+        .offline-badge {
+            text-align: center;
+            font-size: 9px;
+            color: #90A4AE;
+            margin-top: 4px;
+        }
+        .footer {
+            text-align: center;
+            padding: 12px;
+            font-size: 10px;
+            color: #90A4AE;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌤️ پیش‌بینی آب و هوا</h1>
+            <div class="provider">📡 ارائه دهنده: تشکیلات کل گروه‌نهم</div>
+        </div>
+
+        <div class="weather-card">
+            <div class="location" id="display-location">📍 در حال دریافت...</div>
+            <div class="weather-icon" id="display-icon">⏳</div>
+            <div class="weather-desc" id="display-desc">...</div>
+            <div class="temp-main" id="display-temp">--°</div>
+            <div class="temp-feel" id="display-feel">...</div>
+            <div class="result-provider">📡 تشکیلات کل گروه‌نهم</div>
+            <div class="update-time" id="display-time">...</div>
+            <div class="forecast-box">
+                <span class="forecast-label">📝 پیش‌بینی کلی</span>
+                <span id="display-forecast">در حال بارگذاری...</span>
+            </div>
+            <div class="weather-detail" id="weather-details"></div>
+            <div class="offline-badge" id="offline-badge"></div>
+        </div>
+
+        <div class="footer">
+            © 2025 — تشکیلات کل گروه‌نهم | ارائه دهنده خدمات آب و هواشناسی
+        </div>
+    </div>
+
+    <script>
+        // ==================== آدرس فایل JSON روی GitHub Pages ====================
+        const JSON_URL =
+            'https://raw.githubusercontent.com/ya475/weather-app/main/weather-data.json';
+
+        let cachedData = null;
+        let isOnline = true;
+
+        // ==================== لود داده ====================
+        async function fetchWeatherData() {
+            try {
+                const response = await fetch(JSON_URL + '?t=' + Date.now());
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                const data = await response.json();
+                cachedData = data;
+                isOnline = true;
+                return data;
+            } catch (e) {
+                isOnline = false;
+                if (cachedData) {
+                    return cachedData;
+                }
+                throw e;
+            }
+        }
+
+        function renderWeather(data) {
+            document.getElementById('display-location').textContent = '📍 ' + (data.location || 'نامشخص');
+            document.getElementById('display-icon').textContent = data.icon || '❓';
+            document.getElementById('display-desc').textContent = data.desc || '';
+            document.getElementById('display-temp').textContent = (data.temp || '--') + '°';
+            document.getElementById('display-feel').textContent = 'مانند ' + (data.feelsLike || data.temp ||
+                '--') + '°';
+            document.getElementById('display-time').textContent =
+                'آخرین بروزرسانی: ' + (data.date || '') + ' — ' + (data.time || '');
+            document.getElementById('display-forecast').textContent = data.forecast ||
+                'پیش‌بینی در دسترس نیست.';
+
+            const container = document.getElementById('weather-details');
+            if (data.details && data.details.length > 0) {
+                container.innerHTML = data.details.map(d => `
+                <div class="detail-item">
+                    <div class="value">${d.value}</div>
+                    <div class="label">${d.name}</div>
+                </div>
+                `).join('');
+            } else {
+                container.innerHTML = '';
+            }
+
+            const badge = document.getElementById('offline-badge');
+            if (isOnline) {
+                badge.textContent = '🌐 آنلاین — اطلاعات از سرور دریافت شد';
+            } else {
+                badge.textContent = '📴 آفلاین — نمایش آخرین اطلاعات ذخیره‌شده';
+            }
+        }
+
+        function showError(msg) {
+            document.getElementById('display-location').textContent = '📍 خطا';
+            document.getElementById('display-icon').textContent = '⚠️';
+            document.getElementById('display-desc').textContent = 'خطا در دریافت اطلاعات';
+            document.getElementById('display-temp').textContent = '--°';
+            document.getElementById('display-feel').textContent = '';
+            document.getElementById('display-time').textContent = msg;
+            document.getElementById('display-forecast').textContent =
+                'متأسفانه اطلاعات آب و هوا در دسترس نیست. لطفاً اتصال اینترنت خود را بررسی کنید.';
+            document.getElementById('weather-details').innerHTML = '';
+            document.getElementById('offline-badge').textContent = '📴 آفلاین — اطلاعاتی در دسترس نیست';
+        }
+
+        async function init() {
+            try {
+                const data = await fetchWeatherData();
+                renderWeather(data);
+            } catch (e) {
+                showError('اتصال به سرور ممکن نیست. اطلاعاتی نمایش داده نمی‌شود.');
+            }
+        }
+
+        init();
+    </script>
+</body>
+  </html>
