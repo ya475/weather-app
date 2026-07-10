@@ -147,6 +147,33 @@
             margin-bottom: 6px;
             text-align: center;
         }
+
+        /* استایل پیام بروزرسانی */
+        .maintenance-box {
+            text-align: center;
+            padding: 60px 20px;
+            display: none;
+        }
+        .maintenance-box .maintenance-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+        .maintenance-box .maintenance-text {
+            font-size: 18px;
+            color: #FFD54F;
+            margin-bottom: 10px;
+        }
+        .maintenance-box .maintenance-subtext {
+            font-size: 12px;
+            color: #B0BEC5;
+        }
+
         .offline-badge {
             text-align: center;
             font-size: 9px;
@@ -169,19 +196,31 @@
         </div>
 
         <div class="weather-card">
-            <div class="location" id="display-location">📍 در حال دریافت...</div>
-            <div class="weather-icon" id="display-icon">⏳</div>
-            <div class="weather-desc" id="display-desc">...</div>
-            <div class="temp-main" id="display-temp">--°</div>
-            <div class="temp-feel" id="display-feel">...</div>
-            <div class="result-provider">📡 تشکیلات کل گروه‌نهم</div>
-            <div class="update-time" id="display-time">...</div>
-            <div class="forecast-box">
-                <span class="forecast-label">📝 پیش‌بینی کلی</span>
-                <span id="display-forecast">در حال بارگذاری...</span>
+
+            <!-- باکس حالت بروزرسانی -->
+            <div class="maintenance-box" id="maintenance-box">
+                <div class="maintenance-icon">🔄</div>
+                <div class="maintenance-text">سیستم در حال بروزرسانی می‌باشد</div>
+                <div class="maintenance-subtext">لطفاً کمی بعد مراجعه فرمایید</div>
             </div>
-            <div class="weather-detail" id="weather-details"></div>
-            <div class="offline-badge" id="offline-badge"></div>
+
+            <!-- محتوای اصلی آب و هوا -->
+            <div id="weather-content">
+                <div class="location" id="display-location">📍 در حال دریافت...</div>
+                <div class="weather-icon" id="display-icon">⏳</div>
+                <div class="weather-desc" id="display-desc">...</div>
+                <div class="temp-main" id="display-temp">--°</div>
+                <div class="temp-feel" id="display-feel">...</div>
+                <div class="result-provider">📡 تشکیلات کل گروه‌نهم</div>
+                <div class="update-time" id="display-time">...</div>
+                <div class="forecast-box">
+                    <span class="forecast-label">📝 پیش‌بینی کلی</span>
+                    <span id="display-forecast">در حال بارگذاری...</span>
+                </div>
+                <div class="weather-detail" id="weather-details"></div>
+                <div class="offline-badge" id="offline-badge"></div>
+            </div>
+
         </div>
 
         <div class="footer">
@@ -210,6 +249,22 @@
         }
 
         function renderWeather(data) {
+            const weatherContent = document.getElementById('weather-content');
+            const maintenanceBox = document.getElementById('maintenance-box');
+            const offlineBadge = document.getElementById('offline-badge');
+
+            // بررسی حالت بروزرسانی
+            if (data.active === false) {
+                weatherContent.style.display = 'none';
+                maintenanceBox.style.display = 'block';
+                offlineBadge.textContent = '';
+                return;
+            }
+
+            // حالت عادی
+            maintenanceBox.style.display = 'none';
+            weatherContent.style.display = 'block';
+
             document.getElementById('display-location').textContent = '📍 ' + (data.location || 'نامشخص');
             document.getElementById('display-icon').textContent = data.icon || '❓';
             document.getElementById('display-desc').textContent = data.desc || '';
@@ -231,21 +286,17 @@
                 container.innerHTML = '';
             }
 
-            document.getElementById('offline-badge').textContent = isOnline ?
+            offlineBadge.textContent = isOnline ?
                 '🌐 آنلاین — اطلاعات از سرور دریافت شد' :
                 '📴 آفلاین — نمایش آخرین اطلاعات ذخیره‌شده';
         }
 
         function showError(msg) {
-            document.getElementById('display-location').textContent = '📍 خطا';
-            document.getElementById('display-icon').textContent = '⚠️';
-            document.getElementById('display-desc').textContent = 'خطا در دریافت اطلاعات';
-            document.getElementById('display-temp').textContent = '--°';
-            document.getElementById('display-feel').textContent = '';
-            document.getElementById('display-time').textContent = msg;
-            document.getElementById('display-forecast').textContent =
-                'متأسفانه اطلاعات آب و هوا در دسترس نیست. لطفاً اتصال اینترنت خود را بررسی کنید.';
-            document.getElementById('weather-details').innerHTML = '';
+            document.getElementById('weather-content').style.display = 'none';
+            document.getElementById('maintenance-box').style.display = 'block';
+            document.querySelector('.maintenance-icon').textContent = '⚠️';
+            document.querySelector('.maintenance-text').textContent = 'خطا در دریافت اطلاعات';
+            document.querySelector('.maintenance-subtext').textContent = msg;
             document.getElementById('offline-badge').textContent = '📴 آفلاین — اطلاعاتی در دسترس نیست';
         }
 
@@ -254,7 +305,7 @@
                 const data = await fetchWeatherData();
                 renderWeather(data);
             } catch (e) {
-                showError('اتصال به سرور ممکن نیست. اطلاعاتی نمایش داده نمی‌شود.');
+                showError('اتصال به سرور ممکن نیست.');
             }
         }
 
