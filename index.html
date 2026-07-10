@@ -174,6 +174,61 @@
             color: #B0BEC5;
         }
 
+        /* استایل کادر پیش‌بینی چند روزه */
+        .multi-forecast-box {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 16px 18px;
+            margin-top: 14px;
+            font-size: 13px;
+            line-height: 2.2;
+            color: #E0E0E0;
+            text-align: right;
+            word-wrap: break-word;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+            display: none;
+            position: relative;
+        }
+        .multi-forecast-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 100%);
+            border-radius: 16px 16px 0 0;
+            pointer-events: none;
+        }
+        .multi-forecast-box .multi-forecast-label {
+            font-size: 11px;
+            color: #FFD54F;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 10px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .multi-forecast-box .forecast-row {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 6px;
+        }
+        .multi-forecast-box .forecast-row:last-child {
+            margin-bottom: 0;
+        }
+        .multi-forecast-box .forecast-title {
+            font-weight: bold;
+            color: #FFFFFF;
+        }
+        .multi-forecast-box .forecast-text {
+            color: #E0E0E0;
+        }
+
         .offline-badge {
             text-align: center;
             font-size: 9px;
@@ -217,6 +272,13 @@
                     <span class="forecast-label">📝 پیش‌بینی کلی</span>
                     <span id="display-forecast">در حال بارگذاری...</span>
                 </div>
+
+                <!-- کادر پیش‌بینی چند روزه -->
+                <div class="multi-forecast-box" id="multi-forecast-box">
+                    <span class="multi-forecast-label">📅 پیش‌بینی روزهای آینده</span>
+                    <div id="multi-forecast-content"></div>
+                </div>
+
                 <div class="weather-detail" id="weather-details"></div>
                 <div class="offline-badge" id="offline-badge"></div>
             </div>
@@ -274,6 +336,20 @@
                 'آخرین بروزرسانی: ' + (data.date || '') + ' — ' + (data.time || '');
             document.getElementById('display-forecast').textContent = data.forecast || 'پیش‌بینی در دسترس نیست.';
 
+            // نمایش پیش‌بینی چند روزه
+            const multiBox = document.getElementById('multi-forecast-box');
+            const multiContent = document.getElementById('multi-forecast-content');
+            if (data.multiForecast && data.multiForecast.length > 0) {
+                multiContent.innerHTML = data.multiForecast.map(f => `
+                    <div class="forecast-row">
+                        <span class="forecast-title">${f.title}:</span> <span class="forecast-text">${f.text}</span>
+                    </div>
+                `).join('');
+                multiBox.style.display = 'block';
+            } else {
+                multiBox.style.display = 'none';
+            }
+
             const container = document.getElementById('weather-details');
             if (data.details && data.details.length > 0) {
                 container.innerHTML = data.details.map(d => `
@@ -298,6 +374,7 @@
             document.querySelector('.maintenance-text').textContent = 'خطا در دریافت اطلاعات';
             document.querySelector('.maintenance-subtext').textContent = msg;
             document.getElementById('offline-badge').textContent = '📴 آفلاین — اطلاعاتی در دسترس نیست';
+            document.getElementById('multi-forecast-box').style.display = 'none';
         }
 
         async function init() {
