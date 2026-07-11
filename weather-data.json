@@ -1,5 +1,5 @@
 {
-  "active": false,
+  "active": true,
   "location": "پارس آباد",
   "date": "۱۴۰۵/۴/۱۹",
   "time": "۱۶:۵۰",
@@ -17,10 +17,5 @@
     { "name": "🌇 غروب", "value": "۱۹:۴۹" },
     { "name": "☁️ پوشش ابر", "value": "۱۲٪" },
     { "name": "⚕️ شاخص کیفیت هوا", "value": "🟡 نامناسب"}
-  ],
-  "multiForecast": [
-    { "title": "--", "text": "" },
-    { "title": "--", "text": "" },
-    { "title": "--", "text": "" }
   ]
 }
